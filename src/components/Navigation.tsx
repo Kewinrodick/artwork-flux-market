@@ -1,8 +1,13 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Menu, ShoppingCart, User } from "lucide-react";
+import { Menu, ShoppingCart, User, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Navigation = () => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
   return (
     <motion.nav
       initial={{ y: -20, opacity: 0 }}
@@ -39,15 +44,35 @@ const Navigation = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="hover:text-primary">
-              <ShoppingCart className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="hover:text-primary">
-              <User className="h-5 w-5" />
-            </Button>
-            <Button className="hidden md:inline-flex bg-primary text-primary-foreground hover:bg-primary/90 glow-energy">
-              Upload Design
-            </Button>
+            {user ? (
+              <>
+                <Button variant="ghost" size="icon" className="hover:text-primary">
+                  <ShoppingCart className="h-5 w-5" />
+                </Button>
+                <Button variant="ghost" size="icon" className="hover:text-primary">
+                  <User className="h-5 w-5" />
+                </Button>
+                <Button className="hidden md:inline-flex bg-primary text-primary-foreground hover:bg-primary/90 glow-energy">
+                  Upload Design
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="hover:text-primary"
+                  onClick={signOut}
+                  title="Sign Out"
+                >
+                  <LogOut className="h-5 w-5" />
+                </Button>
+              </>
+            ) : (
+              <Button 
+                onClick={() => navigate('/auth')}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                Sign In
+              </Button>
+            )}
             <Button variant="ghost" size="icon" className="md:hidden">
               <Menu className="h-5 w-5" />
             </Button>

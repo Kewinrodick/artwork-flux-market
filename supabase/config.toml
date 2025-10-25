@@ -1,1 +1,8 @@
 project_id = "xjcubmkvfscojuydqjon"
+
+[auth]
+site_url = "https://lovable.dev"
+enabled = true
+
+[functions.stripe-webhook]
+verify_jwt = false
