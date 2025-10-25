@@ -3,8 +3,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, Download, Eye } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface DesignCardProps {
+  id: string;
   title: string;
   designer: string;
   price: number;
@@ -14,8 +16,18 @@ interface DesignCardProps {
   index?: number;
 }
 
-const DesignCard = ({ title, designer, price, imageUrl, likes = 0, views = 0, index = 0 }: DesignCardProps) => {
+const DesignCard = ({ id, title, designer, price, imageUrl, likes = 0, views = 0, index = 0 }: DesignCardProps) => {
   const [isLiked, setIsLiked] = useState(false);
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/design/${id}`);
+  };
+
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsLiked(!isLiked);
+  };
 
   return (
     <motion.div
@@ -23,6 +35,8 @@ const DesignCard = ({ title, designer, price, imageUrl, likes = 0, views = 0, in
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
+      onClick={handleCardClick}
+      className="cursor-pointer"
     >
       <Card className="group overflow-hidden border-border bg-card hover:border-primary/50 transition-all duration-300 hover:shadow-glow">
         {/* Image Container */}
@@ -77,7 +91,7 @@ const DesignCard = ({ title, designer, price, imageUrl, likes = 0, views = 0, in
             <Button
               size="icon"
               variant="ghost"
-              onClick={() => setIsLiked(!isLiked)}
+              onClick={handleLikeClick}
               className={`${isLiked ? 'text-primary' : 'text-muted-foreground'} hover:text-primary`}
             >
               <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
