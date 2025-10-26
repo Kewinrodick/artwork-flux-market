@@ -61,7 +61,7 @@ serve(async (req) => {
     // Fetch design details
     const { data: design, error: designError } = await supabaseClient
       .from('designs')
-      .select('id, title, price, designer_id')
+      .select('id, title, price, designer_id, status')
       .eq('id', design_id)
       .single();
 
@@ -70,6 +70,24 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: 'Design not found' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check if design is already sold
+    if (design.status === 'sold') {
+      console.error('Design already sold');
+      return new Response(
+        JSON.stringify({ error: 'This design has already been purchased' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Prevent designer from buying own design
+    if (design.designer_id === user.id) {
+      console.error('Designer cannot buy own design');
+      return new Response(
+        JSON.stringify({ error: 'You cannot purchase your own design' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 

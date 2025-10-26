@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Navigation = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, hasRole } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -46,14 +46,22 @@ const Navigation = () => {
           <div className="flex items-center gap-4">
             {user ? (
               <>
-                <Button variant="ghost" size="icon" className="hover:text-primary">
-                  <ShoppingCart className="h-5 w-5" />
-                </Button>
-                <Button variant="ghost" size="icon" className="hover:text-primary">
+                {hasRole('designer') && (
+                  <Button 
+                    className="hidden md:inline-flex bg-primary text-primary-foreground hover:bg-primary/90 glow-energy"
+                    onClick={() => navigate('/upload-design')}
+                  >
+                    Upload Design
+                  </Button>
+                )}
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="hover:text-primary"
+                  onClick={() => navigate('/profile')}
+                  title="Profile"
+                >
                   <User className="h-5 w-5" />
-                </Button>
-                <Button className="hidden md:inline-flex bg-primary text-primary-foreground hover:bg-primary/90 glow-energy">
-                  Upload Design
                 </Button>
                 <Button 
                   variant="ghost" 

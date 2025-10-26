@@ -24,6 +24,8 @@ export type Database = {
           is_trending: boolean | null
           likes_count: number | null
           price: number
+          status: string | null
+          tags: string[] | null
           title: string
           updated_at: string | null
         }
@@ -36,6 +38,8 @@ export type Database = {
           is_trending?: boolean | null
           likes_count?: number | null
           price: number
+          status?: string | null
+          tags?: string[] | null
           title: string
           updated_at?: string | null
         }
@@ -48,6 +52,8 @@ export type Database = {
           is_trending?: boolean | null
           likes_count?: number | null
           price?: number
+          status?: string | null
+          tags?: string[] | null
           title?: string
           updated_at?: string | null
         }
@@ -97,6 +103,7 @@ export type Database = {
           designer_earnings: number
           designer_id: string | null
           id: string
+          legal_doc_url: string | null
           platform_fee: number
           status: string
           stripe_payment_intent_id: string | null
@@ -110,6 +117,7 @@ export type Database = {
           designer_earnings: number
           designer_id?: string | null
           id?: string
+          legal_doc_url?: string | null
           platform_fee: number
           status?: string
           stripe_payment_intent_id?: string | null
@@ -123,6 +131,7 @@ export type Database = {
           designer_earnings?: number
           designer_id?: string | null
           id?: string
+          legal_doc_url?: string | null
           platform_fee?: number
           status?: string
           stripe_payment_intent_id?: string | null

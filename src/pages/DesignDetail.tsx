@@ -32,6 +32,7 @@ interface Design {
   likes_count: number;
   designer_id: string;
   created_at: string;
+  status: string;
   profiles: {
     name: string;
     avatar_url: string | null;
@@ -132,6 +133,15 @@ const DesignDetail = () => {
       toast({
         title: 'Buyer Role Required',
         description: 'Only buyers can purchase designs',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (design?.status === 'sold') {
+      toast({
+        title: 'Already Sold',
+        description: 'This design has already been purchased',
         variant: 'destructive',
       });
       return;
@@ -317,10 +327,14 @@ const DesignDetail = () => {
               <Button
                 size="lg"
                 onClick={handlePurchase}
-                disabled={purchasing || design.designer_id === user?.id}
-                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 glow-energy-strong group"
+                disabled={purchasing || design.status === 'sold' || design.designer_id === user?.id}
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 glow-energy-strong group disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {purchasing ? (
+                {design.status === 'sold' ? (
+                  'Sold Out'
+                ) : design.designer_id === user?.id ? (
+                  'Your Design'
+                ) : purchasing ? (
                   'Processing...'
                 ) : (
                   <>

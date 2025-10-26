@@ -74,8 +74,8 @@ serve(async (req) => {
         );
       }
 
-      // Create transaction record
-      const { error: transactionError } = await supabaseAdmin
+      // Begin ACID transaction - create transaction record and get ID
+      const { data: transaction, error: transactionError } = await supabaseAdmin
         .from('transactions')
         .insert({
           design_id,
@@ -86,8 +86,10 @@ serve(async (req) => {
           designer_earnings: Number(designer_earnings),
           stripe_session_id: session.id,
           stripe_payment_intent_id: session.payment_intent as string,
-          status: 'paid',
-        });
+          status: 'completed',
+        })
+        .select()
+        .single();
 
       if (transactionError) {
         console.error('Error creating transaction:', transactionError);
@@ -98,6 +100,36 @@ serve(async (req) => {
       }
 
       console.log('Transaction recorded successfully for session:', session.id);
+
+      // Mark design as sold (ACID consistency)
+      const { error: designError } = await supabaseAdmin
+        .from('designs')
+        .update({ status: 'sold' })
+        .eq('id', design_id);
+
+      if (designError) {
+        console.error('Error updating design status:', designError);
+      } else {
+        console.log('Design marked as sold');
+
+        // Generate legal PDF asynchronously
+        try {
+          const { data: pdfData, error: pdfError } = await supabaseAdmin.functions.invoke(
+            'generate-legal-pdf',
+            {
+              body: { transaction_id: transaction.id },
+            }
+          );
+
+          if (pdfError) {
+            console.error('Error generating legal PDF:', pdfError);
+          } else {
+            console.log('Legal PDF generated:', pdfData);
+          }
+        } catch (pdfGenError) {
+          console.error('PDF generation failed:', pdfGenError);
+        }
+      }
     }
 
     return new Response(
